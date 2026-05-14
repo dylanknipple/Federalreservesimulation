@@ -3,345 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Federal Reserve Simulator - Master Class Edition</title>
+    <title>Federal Reserve Simulator - Main Menu</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 850px; margin: 20px auto; padding: 0 20px; color: #333; background-color: #f7f9fa; }
-        h1, h2, h3 { color: #1a365d; margin-top: 0; margin-bottom: 5px; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #e2e8f0; }
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 15px 0; }
-        .metric { background: #edf2f7; padding: 15px; border-radius: 6px; text-align: center; }
-        .metric-title { font-size: 0.9rem; color: #4a5568; font-weight: bold; }
-        .metric-value { font-size: 1.8rem; font-weight: bold; margin-top: 5px; }
-        .target { font-size: 0.8rem; color: #718096; margin-top: 2px; }
-        .controls { display: flex; align-items: center; gap: 15px; margin-top: 20px; }
-        input[type="range"] { flex-grow: 1; }
-        button { background: #2b6cb0; color: white; border: none; padding: 10px 20px; font-size: 1rem; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        button:hover { background: #2c5282; }
-        button:disabled { background: #cbd5e0; cursor: not-allowed; }
-        .log { max-height: 160px; overflow-y: auto; background: #1a202c; color: #a0aec0; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 0.9rem; }
-        .log-entry { margin-bottom: 5px; }
-        .good { color: #48bb78; } .bad { color: #fc8181; } .neutral { color: #a0aec0; }
-        .alert-banner { padding: 12px; margin-bottom: 20px; border-radius: 4px; font-size: 0.95rem; }
-        
-        /* Menu Screen Specific Layouts */
-        .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
-        .menu-card { background: white; border: 1px solid #e2e8f0; border-top: 6px solid #2b6cb0; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
-        .menu-card.inflation { border-top-color: #c53030; }
-        .menu-card.recession { border-top-color: #3182ce; }
-        .menu-card.normal { border-top-color: #38a169; }
-        .menu-btn { width: 100%; margin-top: 15px; padding: 12px; font-size: 1rem; }
-        
-        /* Press Conference Modal */
-        .press-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
-        .press-modal { background: white; padding: 30px; border-radius: 12px; max-width: 600px; width: 90%; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
-        .choice-btn { display: block; width: 100%; text-align: left; background: #f7fafc; border: 1px solid #e2e8f0; padding: 12px; margin-top: 10px; border-radius: 6px; cursor: pointer; font-size: 0.95rem; transition: background 0.2s; color: #000000 !important; font-weight: 500; }
-        .choice-btn:hover { background: #e2e8f0; border-color: #cbd5e0; }
-
-        /* Confidence bar container */
-        .progress-bg { background: #e2e8f0; width: 100%; height: 12px; border-radius: 6px; margin-top: 8px; overflow: hidden; }
-        .progress-fill { height: 100%; transition: width 0.5s ease-in-out; }
-
-        /* Performance Feedback Area */
-        .feedback-box { display: none; margin-top: 20px; padding: 20px; border-radius: 8px; background: #fff; border: 2px solid #2b6cb0; }
-        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 15px 0; background: #f7fafc; padding: 15px; border-radius: 6px; border: 1px dashed #cbd5e0; }
-        .summary-metric { text-align: center; font-weight: bold; font-size: 1.1rem; }
-        .feedback-section { margin-top: 15px; padding-left: 10px; }
-        .fb-good { border-left: 4px solid #48bb78; padding-left: 10px; margin-bottom: 15px; }
-        .fb-bad { border-left: 4px solid #e53e3e; padding-left: 10px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 650px; margin: 50px auto; padding: 0 20px; text-align: center; background-color: #f7f9fa; color: #333; }
+        h1 { color: #1a365d; margin-bottom: 5px; font-size: 2.2rem; }
+        .subtitle { color: #4a5568; margin-bottom: 35px; font-size: 1.1rem; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; text-align: left; }
+        .menu-btn { display: block; width: 100%; text-align: center; color: white; border: none; padding: 16px; margin: 18px 0; border-radius: 8px; cursor: pointer; font-size: 1.15rem; font-weight: bold; transition: transform 0.1s, background 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.08); text-decoration: none; }
+        .menu-btn:active { transform: scale(0.98); }
+        .inflation-btn { background: #c53030; }
+        .inflation-btn:hover { background: #9b2c2c; }
+        .recession-btn { background: #2b6cb0; }
+        .recession-btn:hover { background: #2c5282; }
+        .normal-btn { background: #2f855a; }
+        .normal-btn:hover { background: #22543d; }
+        .desc { font-size: 0.9rem; color: #4a5568; margin-top: -12px; margin-bottom: 15px; padding-left: 5px; font-style: italic; }
     </style>
 </head>
 <body>
 
-    <!-- SECTION 1: MAIN LAUNCHER MENU -->
-    <div id="game-menu">
-        <h1 style="text-align: center; font-size: 2.2rem; margin-bottom: 10px;">🏛️ Federal Reserve Classroom Simulator</h1>
-        <p style="text-align: center; color: #4a5568; max-width: 600px; margin: 0 auto 30px auto;">Welcome, Chairman. Select an economic sandbox configuration below to begin your 16-quarter monetary policy tenure.</p>
-        
-        <div class="menu-grid">
-            <div class="menu-card inflation">
-                <h3>🚨 High Inflation Emergency</h3>
-                <p style="font-size: 0.9rem; color: #4a5568; margin-top: 10px;">Prices are skyrocketing at <b>8.5%</b>. You must act aggressively to squash a wage-price spiral without causing a stock market crash.</p>
-                <button class="menu-btn" style="background:#c53030;" onclick="startGame('inflation')">Launch Scenario</button>
-            </div>
-            
-            <div class="menu-card recession">
-                <h3>📉 High Unemployment Crisis</h3>
-                <p style="font-size: 0.9rem; color: #4a5568; margin-top: 10px;">The markets have crashed. Unemployment is stuck at a painful <b>8.2%</b>. Deploy cheap credit channels to revive business hiring patterns.</p>
-                <button class="menu-btn" style="background:#3182ce;" onclick="startGame('recession')">Launch Scenario</button>
-            </div>
-            
-            <div class="menu-card normal">
-                <h3>✅ Defending Economic Stability</h3>
-                <p style="font-size: 0.9rem; color: #4a5568; margin-top: 10px;">The ideal "Goldilocks" baseline state. Inflation is at 2.0% and jobs are balanced. Defend this stability against unpredictable global shocks.</p>
-                <button class="menu-btn" style="background:#38a169;" onclick="startGame('normal')">Launch Scenario</button>
-            </div>
-        </div>
+    <h1>🏛️ Federal Reserve Simulator</h1>
+    <div class="subtitle">Select an economic challenge below to begin your 16-quarter tenure as Fed Chairman.</div>
+
+    <div class="card">
+        <!-- Button 1: Links to inflation.html -->
+        <button class="menu-btn inflation-btn" onclick="window.location.href='inflation.html'">🔥 Play Inflation Crisis Scenario</button>
+        <div class="desc">Start with 8.5% inflation. Break the wage-price spiral before the currency destabilizes.</div>
+
+        <!-- Button 2: Links to recession.html -->
+        <button class="menu-btn recession-btn" onclick="window.location.href='recession.html'">📉 Play Recession & Unemployment Scenario</button>
+        <div class="desc">Start with 8.2% unemployment. Deploy monetary stimulus to jumpstart manufacturing and hiring.</div>
+
+        <!-- Button 3: Links to normal.html -->
+        <button class="menu-btn normal-btn" onclick="window.location.href='normal.html'">✅ Play Stable "Goldilocks" Economy Scenario</button>
+        <div class="desc">Start with perfect balanced targets. Defend price stability against incoming global shocks.</div>
     </div>
 
-    <!-- SECTION 2: LIVE RUNTIME SIMULATOR MAIN COMPONENT (Hidden by Default) -->
-    <div id="game-container" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h1 id="scenario-title">Federal Reserve Simulator</h1>
-            <button style="background: #718096; font-size: 0.85rem; padding: 6px 12px;" onclick="returnToMenu()">⚙️ Exit to Menu</button>
-        </div>
-        
-        <div id="alert-banner" class="alert-banner">Economic Briefing text.</div>
-
-        <!-- Status Metrics Card -->
-        <div class="card">
-            <h2 id="current-quarter">Quarter 1 of 16</h2>
-            <div class="grid">
-                <div class="metric">
-                    <div class="metric-title">GDP Growth</div>
-                    <div id="gdp-val" class="metric-value">--</div>
-                    <div class="target">Healthy: 2.0% - 3.0%</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-title">Unemployment</div>
-                    <div id="unemp-val" class="metric-value">--</div>
-                    <div class="target">Target: 4.5%</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-title">Inflation</div>
-                    <div id="inf-val" class="metric-value">--</div>
-                    <div class="target">Target: 2.0%</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-title">Consumer Confidence</div>
-                    <div id="conf-val" class="metric-value">--</div>
-                    <div class="progress-bg"><div id="conf-fill" class="progress-fill"></div></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Policy Controls Card -->
-        <div class="card">
-            <h2>Monetary Policy Action</h2>
-            <p id="policy-description">Adjust interest parameters below to alter economic trajectory metrics.</p>
-            <div class="controls">
-                <label for="rate-slider"><b>Fed Funds Rate:</b> <span id="slider-val" style="font-size:1.2rem; font-weight:bold;">--</span></label>
-                <input type="range" id="rate-slider" min="0" max="15" step="0.25" value="4.25">
-                <button id="next-btn" onclick="advanceQuarter()">Submit & Advance</button>
-            </div>
-        </div>
-
-        <!-- System Log Card -->
-        <div class="card">
-            <h2>Ticker Feed & History</h2>
-            <div id="log" class="log"></div>
-        </div>
-
-        <!-- Integrated Evaluation Summary Sheet Component -->
-        <div id="feedback-box" class="feedback-box card">
-            <h2>📊 Performance Evaluation Report</h2>
-            <h3 id="fb-score">Final Score: --</h3>
-            
-            <p style="margin-top: 15px; font-weight: bold; color: #1a365d;">Your Final Economic Blueprint Results:</p>
-            <div class="summary-grid">
-                <div class="summary-metric">GDP: <span id="sum-gdp">--</span></div>
-                <div class="summary-metric">Unemployment: <span id="sum-unemp">--</span></div>
-                <div class="summary-metric">Inflation: <span id="sum-inf">--</span></div>
-                <div class="summary-metric">Confidence: <span id="sum-conf">--</span></div>
-            </div>
-
-            <p id="fb-summary" style="font-size: 1.05rem; line-height: 1.5; color: #2d3748; margin-bottom: 15px;"></p>
-            
-            <div class="feedback-section">
-                <div class="fb-good">
-                    <b style="color: #2f855a;">What You Did Well:</b>
-                    <p id="fb-positives" style="margin-top: 5px; color: #4a5568;"></p>
-                </div>
-                <div class="fb-bad">
-                    <b style="color: #c53030;">Areas for Improvement:</b>
-                    <p id="fb-negatives" style="margin-top: 5px; color: #4a5568;"></p>
-                </div>
-            </div>
-            <button style="margin-top: 15px; width: 100%; background: #4a5568;" onclick="returnToMenu()">Replay / Try Another Scenario</button>
-        </div>
-    </div>
-
-    <!-- Live Press Conference Overlay Popup Container -->
-    <div id="press-overlay" class="press-overlay">
-        <div id="press-modal" class="press-modal">
-            <h2 style="display:flex; align-items:center; gap:8px;">🎤 Live FOMC Press Conference</h2>
-            <p style="color:#4a5568; font-style:italic; font-size:0.9rem;" id="reporter-name">Reporter:</p>
-            <h3 id="press-question" style="font-size:1.15rem; margin-bottom:15px; color:#000;">Question Content Block</h3>
-            <div id="press-choices"></div>
-        </div>
-    </div>
-
-    <script>
-        // Runtime simulation environment parameters
-        let activeScenario = '';
-        let quarter = 1;
-        let gdp, unemployment, inflation, fedRate, confidence;
-        const TOTAL_QUARTERS = 16;
-        
-        // Diagnostic profiling structures
-        let historyRates = [];
-        let trackingFlagA = 0; // Tracks overshooting or excessive expansionary states
-        let trackingFlagB = 0; // Tracks sluggish loops or deflation vulnerabilities
-
-        // Main Entrance Handler
-        function startGame(mode) {
-            activeScenario = mode;
-            quarter = 1;
-            historyRates = [];
-            trackingFlagA = 0;
-            trackingFlagB = 0;
-            
-            // Clean interface views
-            document.getElementById('game-menu').style.display = 'none';
-            document.getElementById('game-container').style.display = 'block';
-            document.getElementById('feedback-box').style.display = 'none';
-            document.getElementById('next-btn').disabled = false;
-            document.getElementById('rate-slider').disabled = false;
-            document.getElementById('log').innerHTML = '';
-
-            // Setup profile variations based on chosen sandbox
-            const slider = document.getElementById('rate-slider');
-            const banner = document.getElementById('alert-banner');
-            const pBox = document.getElementById('press-modal');
-
-            if (mode === 'inflation') {
-                gdp = 4.2; unemployment = 3.1; inflation = 8.5; fedRate = 1.50; confidence = 55;
-                slider.min = "0"; slider.max = "15"; slider.value = "1.50";
-                pBox.style.borderTop = "8px solid #c53030";
-                banner.className = "alert-banner";
-                banner.style.background = "#fff5f5"; banner.style.borderLeft = "4px solid #c53030"; banner.style.color = "#9b2c2c";
-                banner.innerHTML = "🚨 <b>CRISIS BRIEFING:</b> Post-pandemic supply bottlenecks and intense fiscal stimulus have severely overheated the economy. Inflation is running wild at <b>8.5%</b>. You have 16 quarters to break the inflation cycle. Adjust the rate up dramatically to defend buying power values.";
-                document.getElementById('scenario-title').innerText = "Scenario: High Inflation Emergency";
-                document.getElementById('policy-description').innerText = "Adjust the rate. Negative real interest rates (rates lower than inflation) will keep accelerating price hikes.";
-                addLog("[SYSTEM] Inflation crisis loop initialized. Current benchmark rate (1.50%) is too low for 8.5% inflation.", "bad");
-            } 
-            else if (mode === 'recession') {
-                gdp = 0.2; unemployment = 8.2; inflation = 0.5; fedRate = 5.50; confidence = 38;
-                slider.min = "0"; slider.max = "10"; slider.value = "5.50";
-                pBox.style.borderTop = "8px solid #3182ce";
-                banner.className = "alert-banner";
-                banner.style.background = "#ebf8ff"; banner.style.borderLeft = "4px solid #3182ce"; banner.style.color = "#2b6cb0";
-                banner.innerHTML = "📉 <b>ECONOMIC CRISIS BRIEFING:</b> The economy has plummeted into a deep recession. Unemployment has surged to <b>8.2%</b>, GDP is flat at <b>0.2%</b>, and consumer confidence is near rock bottom. Deploy cheap credit channels to prompt borrowing and corporate expansions.";
-                document.getElementById('scenario-title').innerText = "Scenario: High Unemployment Crisis";
-                document.getElementById('policy-description').innerText = "Adjust the rate. The current rate is 5.50%—which is way too high for an economy starving for credit. Lowering rates prompts enterprise investments.";
-                addLog("[SYSTEM] Recession sandbox initiated. High restrictive rates are straining liquidity positions.", "bad");
-            } 
-            else if (mode === 'normal') {
-                gdp = 2.5; unemployment = 4.5; inflation = 2.0; fedRate = 4.25; confidence = 75;
-                slider.min = "0"; slider.max = "12"; slider.value = "4.25";
-                pBox.style.borderTop = "8px solid #38a169";
-                banner.className = "alert-banner";
-                banner.style.background = "#f0fff4"; banner.style.borderLeft = "4px solid #38a169"; banner.style.color = "#22543d";
-                banner.innerHTML = "✅ <b>ECONOMIC BRIEFING:</b> The economy is currently in a balanced state. Inflation is right at your <b>2.0%</b> target, unemployment is a healthy <b>4.5%</b>. Your goal is to preserve this stability over the next 4 years as unexpected macroeconomic shocks roll in!";
-                document.getElementById('scenario-title').innerText = "Scenario: Defending Economic Stability";
-                document.getElementById('policy-description').innerText = "Adjust the rate. The current rate is 4.25%, which is considered neutral for this environment. Pivot dynamically as timeline updates change conditions.";
-                addLog("[SYSTEM] Goldilocks baseline balanced. Target neutral reference points track around 4.0% - 4.5%.", "good");
-            }
-
-            document.getElementById('slider-val').innerText = fedRate.toFixed(2) + '%';
-            document.getElementById('current-quarter').innerText = `Quarter 1 of ${TOTAL_QUARTERS}`;
-            updateUI();
-        }
-
-        function returnToMenu() {
-            document.getElementById('game-container').style.display = 'none';
-            document.getElementById('game-menu').style.display = 'block';
-        }
-
-        // Context dynamic response mapping matrices
-        const pressDatabase = {
-            'inflation': {
-                4: { reporter: "Wall Street Journal:", question: "Mr./Madam Chair, inflation remains stubbornly high despite your early adjustments. Is the Fed fully committed to its 2% mandate, or are you afraid of causing a recession?", choices: [{ text: "We will do whatever it takes to break inflation. Substantial rate hikes remain firmly on the table.", impact: () => { inflation -= 0.6; gdp -= 0.3; confidence -= 8; return "Markets price in aggressive hikes. Inflation expectations fall, but short-term consumer sentiment drops."; } }, { text: "We must look at both sides of our mandate. Protecting American jobs is just as important as lower prices.", impact: () => { inflation += 0.8; confidence += 5; return "Consumers feel short-term job security relief, but markets fear a dowiish Fed, worsening inflation expectations."; } }] },
-                8: { reporter: "Bloomberg News:", question: "Consumers are cutting back on retail spending and the housing sector is slumping. Are we currently headed toward a stagflation trap, and how will you adapt?", choices: [{ text: "We believe the slowdown is transitory. Supply chains are normalizing, so we will pause rate increases.", impact: () => { gdp += 0.4; inflation += 0.6; confidence += 8; return "Consumer confidence jumps temporarily on a policy pause, but core inflation flares back up."; } }, { text: "Slowing demand is a painful but necessary step to stabilize prices. We will hold tight restrictions until the data changes.", impact: () => { gdp -= 0.6; inflation -= 0.8; unemployment += 0.4; confidence -= 12; return "Confidence dips significantly as businesses freeze expansion and cut down operational budgets."; } }] },
-                12: { reporter: "Fox Business Network:", question: "Political leaders are criticizing high interest rates, stating they are killing small businesses. Will political pressure alter your policy runway?", choices: [{ text: "The Federal Reserve operates strictly independent of politics. Our sole focus remains long-term structural health.", impact: () => { inflation -= 0.4; confidence += 4; return "Fed institutional credibility strengthens. Long-term corporate baseline expectations stabilize."; } }, { text: "We are listening closely to public concerns and will factor economic hardships into our upcoming winter cycle decisions.", impact: () => { inflation += 0.5; confidence += 2; return "Short-term populist relief, but long-term market volatility ticks upward."; } }] }
-            },
-            'recession': {
-                4: { reporter: "The New York Times:", question: "With millions of Americans out of work, small businesses are demanding that the Fed slash rates down to 0%. Why are you hesitating to save the job market?", choices: [{ text: "We understand the pain. We will aggressively lower rates immediately to fuel credit markets and maximize employment numbers.", impact: () => { unemployment -= 0.6; gdp += 0.4; confidence += 10; return "Public rejoices. Consumer borrowing spikes, speeding up the path toward recovery."; } }, { text: "We must proceed with caution. Dropping rates too fast could flood the economy with artificial cash, sparking future inflation shocks.", impact: () => { inflation -= 0.1; confidence -= 5; return "Markets respect the discipline, but workers face prolonged unemployment stress."; } }] },
-                8: { reporter: "Associated Press:", question: "As the economy begins to show signs of life, raw material shortages are starting to emerge. Are you worried that your expansionary policies have laid the groundwork for an inflation spike?", choices: [{ text: "Our focus is strictly on jobs. We will keep interest rates low until structural full employment is explicitly hit.", impact: () => { inflation += 0.8; gdp += 0.3; confidence += 5; return "Hiring remains hot, but market traders start pricing in real inflation threats."; } }, { text: "We are tracking those numbers closely. If signs of overheating emerge, we are fully prepared to reverse course and tap the brakes.", impact: () => { inflation -= 0.4; confidence -= 4; return "Businesses moderate their expansion budgets. Inflation risks shrink."; } }] },
-                12: { reporter: "NPR Marketplace:", question: "Some economic researchers state that the natural rate of unemployment has changed fundamentally, and that trying to push it down further is a mistake. What is your strategy?", choices: [{ text: "We believe the current economic slack is cyclical, not structural. We will maintain an accommodative posture to heal the labor force.", impact: () => { unemployment -= 0.3; inflation += 0.5; return "Hiring pressure accelerates, pushing the economy into hot expansion territory."; } }, { text: "We will allow the economy to balance naturally at this stage, pivoting our primary focus back to defending price stability.", impact: () => { inflation -= 0.5; gdp -= 0.2; return "Inflation pressures are neutralized, stabilizing the economy's long-term structure."; } }] }
-            },
-            'normal': {
-                4: { reporter: "Associated Press:", question: "Mr./Madam Chair, the economy has enjoyed a long period of calm stability. Some analysts argue the Fed should cut rates preemptively to boost tech sector investment. How do you respond?", choices: [{ text: "The economy is running smoothly at the current neutral rate. Preemptive cuts risk sparking unnecessary inflation.", impact: () => { confidence += 2; return "Markets appreciate the steady approach. Inflation expectations remain firmly anchored."; } }, { text: "We see room for optimization. We will hint at upcoming rate cuts to maximize growth potential.", impact: () => { inflation += 0.5; gdp += 0.3; confidence += 5; return "Markets rally on the dowiish news, but underlying inflationary pressures creep up."; } }] },
-                8: { reporter: "CNBC International:", question: "With the recent global energy shocks, market volatility is rising. Are you prepared to prioritize inflation control even if it means consumer confidence drops?", choices: [{ text: "Price stability is our primary mandate. We will raise rates aggressively if energy costs leak into general consumer prices.", impact: () => { inflation -= 0.5; gdp -= 0.4; confidence -= 8; return "The hawk stance anchors long-term inflation, but consumer confidence takes an immediate hit."; } }, { text: "We intend to look through these supply disruptions and keep policy accommodating to support household spending.", impact: () => { inflation += 0.7; gdp += 0.2; confidence += 3; return "Consumers feel short-term relief, but failure to act fuels a rise in core inflation metrics."; } }] },
-                12: { reporter: "Reuters Business:", question: "As you enter the final stretch of your term, critics suggest the Fed has become too reactive rather than proactive. How do you define your policy strategy today?", choices: [{ text: "We are data-dependent. We adjust our trajectory dynamically as clear, verified quarterly numbers emerge.", impact: () => { confidence += 3; return "Markets find comfort in the transparent, standard approach to policy math."; } }, { text: "We are executing a strict, long-term blueprint to ensure stability, ignoring short-term market noise entirely.", impact: () => { gdp -= 0.2; confidence -= 4; return "Some investors worry about a rigid Fed that might miss rapid changes in the real economy."; } }] }
-            }
-        };
-
-        const slider = document.getElementById('rate-slider');
-        const sliderVal = document.getElementById('slider-val');
-        slider.addEventListener('input', (e) => {
-            sliderVal.innerText = parseFloat(e.target.value).toFixed(2) + '%';
-        });
-
-        function addLog(text, type='neutral') {
-            const logBox = document.getElementById('log');
-            const entry = document.createElement('div');
-            entry.className = `log-entry ${type}`;
-            entry.innerHTML = text;
-            logBox.appendChild(entry);
-            logBox.scrollTop = logBox.scrollHeight;
-        }
-
-        function advanceQuarter() {
-            fedRate = parseFloat(slider.value);
-            historyRates.push(fedRate);
-            let shock = (Math.random() - 0.5) * 0.35;
-
-            // Scenario Timeline Shock Router
-            if (activeScenario === 'inflation') {
-                if (quarter === 3) { inflation += 0.6; confidence -= 5; addLog("[NEWS] Geopolitical conflicts break out, forcing global energy costs higher.", 'bad'); }
-                if (quarter === 6 && fedRate < 6.0) { inflation += 1.0; confidence -= 6; addLog("[NEWS] Labor unions successfully secure 8% wage increases across core sectors.", 'bad'); }
-                if (quarter === 10) { shock -= 0.8; confidence -= 10; addLog("[NEWS] Regional bank liquidity issues spark stricter credit standards across lenders.", 'bad'); }
-                if (quarter === 14) { shock += 0.4; confidence += 8; addLog("[NEWS] Breakthroughs in automated supply logistics structurally lower operational overhead.", 'good'); }
-                
-                // Engine calculation
-                let realRate = fedRate - inflation;
-                if (realRate < -2.5) {
-                    gdp += 0.4 + (shock * 0.4); inflation += 0.5 + (shock * 0.4); unemployment -= 0.3; confidence += 2;
-                } else {
-                    let strength = (fedRate - 1.5) * 0.35;
-                    gdp = gdp - strength + (shock * 0.4); inflation = inflation - (strength * 0.45) + (shock * 0.3); unemployment = unemployment + (strength * 0.25) - (gdp * 0.12);
-                }
-                if (inflation > 5.0) trackingFlagA++;
-                if (unemployment > 6.5) trackingFlagB++;
-                if (inflation > 4.5) confidence -= (inflation - 4.5) * 1.5;
-                if (unemployment > 5.5) confidence -= (unemployment - 5.5) * 2.0;
-                if (gdp > 1.5 && gdp <= 3.5 && inflation < 3.0) confidence += 3;
-            } 
-            else if (activeScenario === 'recession') {
-                if (quarter === 3) { unemployment += 0.5; confidence -= 6; addLog("[NEWS] Global supply lines choke as shipping conglomerates register logistics halts.", 'bad'); }
-                if (quarter === 7) { gdp += 0.8; confidence += 8; addLog("[NEWS] Corporate tax updates spur investment infrastructure spending across industrial hubs.", 'good'); }
-                if (quarter === 11) { shock += 0.6; addLog("[NEWS] A sudden consumer credit boom unleashes massive pent-up household spending.", 'good'); }
-                
-                // Engine calculation
-                let stimulus = 4.50 - fedRate;
-                gdp = gdp + (stimulus * 0.35) + (shock * 0.4); inflation = inflation + (stimulus * 0.25) + (shock * 0.3); unemployment = unemployment - (gdp * 0.22) - (stimulus * 0.15);
-                
-                if (inflation > 4.0) trackingFlagA++;
-                if (unemployment > 7.0) trackingFlagB++;
-                let unempPain = Math.max(0, unemployment - 4.5);
-                let infPain = Math.max(0, Math.abs(inflation - 2.0));
-                confidence -= (unempPain * 2.5) + (infPain * 2.0);
-                if (gdp > 2.0 && unempPain === 0 && infPain < 0.8) confidence += 6;
-            } 
-            else if (activeScenario === 'normal') {
-                if (quarter === 3) { gdp += 0.6; inflation += 0.5; addLog("[NEWS] A sudden global tech boom boosts business investments and productivity.", 'good'); }
-                if (quarter === 6) { inflation += 1.2; confidence -= 6; addLog("[NEWS] Geopolitical tension causes a sudden, massive spike in global oil and shipping costs.", 'bad'); }
-                if (quarter === 10) { shock -= 0.9; confidence -= 12; addLog("[NEWS] A major housing market correction cools down consumer asset values and spending.", 'bad'); }
-                if (quarter === 13) { shock += 0.5; addLog("[NEWS] Trade agreements reduce import tariffs, dropping retail prices across the country.", 'good'); }
-                
-                // Engine calculation
-                let tightness = fedRate - 4.25;
-                gdp = gdp - (tightness * 0.4) + (shock * 0.5); inflation = inflation - (tightness * 0.3) + (shock * 0.4); unemployment = unemployment + (tightness * 0.25) - (gdp * 0.15);
-                
-                if (inflation > 3.5) trackingFlagA++;
-                if (unemployment > 5.5) trackingFlagB++;
-                let infDev = Math.abs(inflation - 2.0);
-                let unempDev = Math.max(0, unemployment - 4.5);
-                if (infDev > 1.0) confidence -= infDev * 2.0;
-                if (unempDev > 0.5) confidence -= unempDev * 3.0;
-                if (gdp >= 2.0 && gdp <= 3.0 && infDev < 0.5) confidence += 4;
-            }
-
-            // Universal spending velocity safety loop parameters
-            if (confidence < 40) { gdp -= 0.4; unemployment += 0.2; }
-            if (un
+</body>
+</html>
