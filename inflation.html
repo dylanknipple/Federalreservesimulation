@@ -55,7 +55,6 @@
         🚨 <b>CRISIS BRIEFING:</b> Post-pandemic supply bottlenecks and intense fiscal stimulus have severely overheated the economy. Inflation is running wild at <b>8.5%</b>. You have 16 quarters to break the inflation cycle while monitoring <b>Consumer Confidence</b>. If you fail to raise rates high enough early on, a wage-price spiral will devastate the economy!
     </div>
 
-    <!-- Status Card -->
     <div class="card">
         <h2 id="current-quarter">Quarter 1 of 16</h2>
         <div class="grid">
@@ -82,7 +81,6 @@
         </div>
     </div>
 
-    <!-- Policy Control Card -->
     <div class="card">
         <h2>Monetary Policy Action</h2>
         <p>Move the slider to set the Federal Funds Rate to move towards or maintain your desired economic goals. Click Submit and Advance to move to the next quarter. It may take all 16 quarters to meet your economic goals. The ticker and feed history below can reveal important news and current events.</p>
@@ -93,7 +91,6 @@
         </div>
     </div>
 
-    <!-- News & History Card -->
     <div class="card">
         <h2>Ticker Feed & History</h2>
         <div id="log" class="log">
@@ -101,7 +98,6 @@
         </div>
     </div>
 
-    <!-- Post-Game Analytical Evaluation Report -->
     <div id="feedback-box" class="feedback-box card">
         <h2>📊 Performance Evaluation Report</h2>
         <h3 id="fb-score">Final Score: --</h3>
@@ -128,7 +124,6 @@
         </div>
     </div>
 
-    <!-- Press Conference Popup System -->
     <div id="press-overlay" class="press-overlay">
         <div class="press-modal">
             <h2 style="display:flex; align-items:center; gap:8px;">🎤 Live FOMC Press Conference</h2>
@@ -233,7 +228,12 @@
                 let contractionStrength = (fedRate - 1.5) * 0.35;
                 gdp = gdp - contractionStrength + (shock * 0.4);
                 inflation = inflation - (contractionStrength * 0.45) + (shock * 0.3);
-                unemployment = unemployment + (contractionStrength * 0.25) - (gdp * 0.12);
+                
+                // Fixed Code: Ensure negative GDP properly increases unemployment without sign-flipping bugs
+                let gdpImpact = gdp < 0 ? Math.abs(gdp) * 0.15 : -(gdp * 0.12);
+                unemployment = unemployment + (contractionStrength * 0.20) + gdpImpact;
+                // Prevent runaway values
+                unemployment = Math.max(3.0, Math.min(15.0, unemployment));
             }
 
             // Track flags for post-mortem critique
@@ -241,7 +241,16 @@
             if (unemployment > 6.5) harshRecessionQuarters++;
 
             // Confidence metrics tracking
-            if (inflation > 4.5) confidence -= (inflation - 4.5) * 1.5;
+            // Fixed Code: Cap the penalty and add a stabilization mechanic
+            let inflationExcess = Math.max(0, inflation - 4.5);
+            let confidencePenalty = Math.min(3, inflationExcess * 0.8); // Capped at 3 points max
+            confidence -= confidencePenalty;
+            // Reward the player for aggressive rate hikes when inflation is high
+            if (fedRate >= inflation - 1 && inflation > 5) {
+                confidence += 1.5; 
+            }
+            confidence = Math.max(10, Math.min(100, confidence)); // Hard floor at 10 to prevent death spiral
+
             if (unemployment > 5.5) confidence -= (unemployment - 5.5) * 2.0;
             if (gdp > 1.5 && gdp <= 3.5 && inflation < 3.0) confidence += 3;
 
@@ -269,6 +278,7 @@
             }
         }
 
+        // Keep rest of code exactly the same
         function updateUI() {
             document.getElementById('gdp-val').innerText = gdp.toFixed(1) + '%';
             document.getElementById('unemp-val').innerText = unemployment.toFixed(1) + '%';
