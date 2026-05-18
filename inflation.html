@@ -3,400 +3,535 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Federal Reserve Simulator - High Inflation Challenge</title>
+    <title>Federal Reserve Simulator</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 850px; margin: 20px auto; padding: 0 20px; color: #333; background-color: #f7f9fa; }
-        h1, h2, h3 { color: #1a365d; margin-top: 0; margin-bottom: 5px; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #e2e8f0; }
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 15px 0; }
-        .metric { background: #edf2f7; padding: 15px; border-radius: 6px; text-align: center; }
-        .metric-title { font-size: 0.9rem; color: #4a5568; font-weight: bold; }
-        .metric-value { font-size: 1.8rem; font-weight: bold; margin-top: 5px; }
-        .target { font-size: 0.8rem; color: #718096; margin-top: 2px; }
-        .controls { display: flex; align-items: center; gap: 15px; margin-top: 20px; }
-        input[type="range"] { flex-grow: 1; }
-        button { background: #c53030; color: white; border: none; padding: 10px 20px; font-size: 1rem; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        button:hover { background: #9b2c2c; }
-        button:disabled { background: #cbd5e0; cursor: not-allowed; }
-        .log { max-height: 160px; overflow-y: auto; background: #1a202c; color: #a0aec0; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 0.9rem; }
-        .log-entry { margin-bottom: 5px; }
-        .good { color: #48bb78; } .bad { color: #fc8181; } .neutral { color: #a0aec0; }
-        .alert-banner { background: #fff5f5; border-left: 4px solid #c53030; color: #9b2c2c; padding: 12px; margin-bottom: 20px; border-radius: 4px; font-size: 0.95rem; }
-        
-        /* Press Conference Modal */
-        .press-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
-        .press-modal { background: white; padding: 30px; border-radius: 12px; max-width: 600px; width: 90%; border-top: 8px solid #c53030; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
-        .choice-btn { display: block; width: 100%; text-align: left; background: #f7fafc; border: 1px solid #e2e8f0; padding: 12px; margin-top: 10px; border-radius: 6px; cursor: pointer; font-size: 0.95rem; transition: background 0.2s; color: #000000 !important; font-weight: 500; }
-        .choice-btn:hover { background: #e2e8f0; border-color: #cbd5e0; }
+        :root {
+            --bg-color: #0d1117;
+            --panel-bg: #161b22;
+            --text-color: #c9d1d9;
+            --accent-color: #58a6ff;
+            --success-color: #2ea44f;
+            --warning-color: #d29922;
+            --danger-color: #f85149;
+            --border-color: #30363d;
+        }
 
-        /* Confidence bar container */
-        .progress-bg { background: #e2e8f0; width: 100%; height: 12px; border-radius: 6px; margin-top: 8px; overflow: hidden; }
-        .progress-fill { background: #c53030; height: 100%; width: 55%; transition: width 0.5s ease-in-out; }
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
 
-        /* Performance Feedback Area */
-        .feedback-box { display: none; margin-top: 20px; padding: 20px; border-radius: 8px; background: #fff; border: 2px solid #c53030; }
-        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 15px 0; background: #f7fafc; padding: 15px; border-radius: 6px; border: 1px dashed #cbd5e0; }
-        .summary-metric { text-align: center; font-weight: bold; font-size: 1.1rem; }
-        .feedback-section { margin-top: 15px; padding-left: 10px; }
-        .fb-good { border-left: 4px solid #48bb78; padding-left: 10px; margin-bottom: 15px; }
-        .fb-bad { border-left: 4px solid #e53e3e; padding-left: 10px; }
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background-color: var(--panel-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px dashed var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: var(--accent-color);
+            margin: 0;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: #8b949e;
+            margin-top: 5px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #8b949e;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .panel-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        input[type="range"] {
+            flex-grow: 1;
+            accent-color: var(--accent-color);
+        }
+
+        .slider-value {
+            font-size: 18px;
+            font-weight: bold;
+            width: 60px;
+            text-align: right;
+            color: var(--accent-color);
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:disabled {
+            background-color: var(--border-color);
+            color: #8b949e;
+            cursor: not-allowed;
+        }
+
+        .log-container {
+            height: 180px;
+            overflow-y: auto;
+            font-size: 11px;
+            line-height: 1.5;
+            background-color: #010409;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .log-entry {
+            margin-bottom: 6px;
+            border-bottom: 1px dotted #21262d;
+            padding-bottom: 4px;
+        }
+
+        .chart-container {
+            height: 220px;
+            position: relative;
+        }
+
+        .news-box {
+            background-color: #1f1515;
+            border: 1px solid var(--danger-color);
+            color: #ff7b72;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .game-over {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(13, 17, 23, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            visibility: hidden;
+        }
+
+        .modal {
+            background-color: var(--panel-bg);
+            border: 2px solid var(--border-color);
+            padding: 40px;
+            border-radius: 6px;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .modal h2 {
+            font-size: 28px;
+            margin-top: 0;
+            text-transform: uppercase;
+        }
+
+        .modal p {
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        /* Utility classes for dynamic colors */
+        .text-success { color: var(--success-color); }
+        .text-warning { color: var(--warning-color); }
+        .text-danger { color: var(--danger-color); }
+        .text-accent { color: var(--accent-color); }
     </style>
+    <!-- Chart.js for data visualization -->
+    <script src="https://jsdelivr.net"></script>
 </head>
 <body>
 
-    <div style="margin-bottom: 15px;">
-        <a href="index.html" style="display: inline-block; background: #4a5568; color: white; text-decoration: none; padding: 8px 16px; border-radius: 5px; font-size: 0.9rem; font-weight: bold;">← Main Menu</a>
-    </div>
+    <div class="container">
+        <header>
+            <h1>Federal Reserve Simulator</h1>
+            <div class="subtitle">Monetary Policy Simulation Engine // Terminal v1.0.4</div>
+        </header>
 
-    <h1>🏛️ Federal Reserve Simulator</h1>
-    <h2>Scenario: High Inflation Emergency</h2>
-    
-    <div class="alert-banner">
-        🚨 <b>CRISIS BRIEFING:</b> Post-pandemic supply bottlenecks and intense fiscal stimulus have severely overheated the economy. Inflation is running wild at <b>8.5%</b>. You have 16 quarters to break the inflation cycle while monitoring <b>Consumer Confidence</b>. If you fail to raise rates high enough early on, a wage-price spiral will devastate the economy!
-    </div>
+        <div class="news-box" id="newsBox">
+            <strong>CRITICAL ALERT:</strong> <span id="newsText">Inflation is spiraling out of control. Public confidence dropping rapidly!</span>
+        </div>
 
-    <div class="card">
-        <h2 id="current-quarter">Quarter 1 of 16</h2>
-        <div class="grid">
-            <div class="metric">
-                <div class="metric-title">GDP Growth</div>
-                <div id="gdp-val" class="metric-value">4.2%</div>
-                <div class="target">Healthy: 2.0% - 3.0%</div>
+        <div class="dashboard">
+            <div class="stat-card">
+                <div class="stat-label">Current Quarter</div>
+                <div class="stat-value text-accent" id="quarterVal">Q1</div>
             </div>
-            <div class="metric">
-                <div class="metric-title">Unemployment</div>
-                <div id="unemp-val" class="metric-value">3.1%</div>
-                <div class="target">Target: 4.5%</div>
+            <div class="stat-card">
+                <div class="stat-label">Inflation (Target: 2.0%)</div>
+                <div class="stat-value" id="inflationVal">8.5%</div>
             </div>
-            <div class="metric">
-                <div class="metric-title">Inflation</div>
-                <div id="inf-val" class="metric-value bad">8.5%</div>
-                <div class="target">Target: 2.0%</div>
+            <div class="stat-card">
+                <div class="stat-label">GDP Growth</div>
+                <div class="stat-value" id="gdpVal">2.1%</div>
             </div>
-            <div class="metric">
-                <div class="metric-title">Consumer Confidence</div>
-                <div id="conf-val" class="metric-value" style="color: #3182ce;">55%</div>
-                <div class="progress-bg"><div id="conf-fill" class="progress-fill"></div></div>
+            <div class="stat-card">
+                <div class="stat-label">Unemployment</div>
+                <div class="stat-value" id="unemploymentVal">4.2%</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="panel">
+                <div class="panel-title">Policy Controls</div>
+                
+                <div class="control-group">
+                    <label for="rateSlider">Set Target Federal Funds Rate (%):</label>
+                    <div class="slider-container">
+                        <input type="range" id="rateSlider" min="0" max="15" step="0.25" value="5.25">
+                        <div class="slider-value" id="rateSliderVal">5.25%</div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="margin-bottom: 20px; background-color: #010409;">
+                    <div class="stat-label">Public Confidence Pool</div>
+                    <div class="stat-value text-success" id="confidenceVal" style="font-size: 28px;">55</div>
+                </div>
+
+                <button id="nextQuarterBtn">Advance to Next Quarter</button>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">Macroeconomic Trends</div>
+                <div class="chart-container">
+                    <canvas id="economyChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-title">Federal Open Market Committee (FOMC) Log</div>
+            <div class="log-container" id="logContainer">
+                <div class="log-entry">[SYSTEM INITIALIZATION] Simulation loaded. Starting parameters: Inflation 8.5%, GDP 2.1%, Unemployment 4.2%. Public Confidence is fragile. Double-digit inflation risks total meltdown. Your objective is to achieve stable 2.0% inflation over 16 quarters without causing a depression.</div>
             </div>
         </div>
     </div>
 
-    <div class="card">
-        <h2>Monetary Policy Action</h2>
-        <p>Move the slider to set the Federal Funds Rate to move towards or maintain your desired economic goals. Click Submit and Advance to move to the next quarter. It may take all 16 quarters to meet your economic goals. The ticker and feed history below can reveal important news and current events.</p>
-        <div class="controls">
-            <label for="rate-slider"><b>Fed Funds Rate:</b> <span id="slider-val" style="color:#c53030; font-size:1.2rem; font-weight:bold;">1.50%</span></label>
-            <input type="range" id="rate-slider" min="0" max="15" step="0.25" value="1.50">
-            <button id="next-btn" onclick="advanceQuarter()">Submit & Advance</button>
-        </div>
-    </div>
-
-    <div class="card">
-        <h2>Ticker Feed & History</h2>
-        <div id="log" class="log">
-            <div class="log-entry" style="color: #fc8181;">[SYSTEM] Simulation started. Fed Funds Rate starts at a low 1.50%. Inflation is deeply entrenched at 8.5%. Action is required.</div>
-        </div>
-    </div>
-
-    <div id="feedback-box" class="feedback-box card">
-        <h2>📊 Performance Evaluation Report</h2>
-        <h3 id="fb-score">Final Score: --</h3>
-        
-        <p style="margin-top: 15px; font-weight: bold; color: #1a365d;">Your Final Economic Blueprint Results:</p>
-        <div class="summary-grid">
-            <div class="summary-metric">GDP: <span id="sum-gdp">--</span></div>
-            <div class="summary-metric">Unemployment: <span id="sum-unemp">--</span></div>
-            <div class="summary-metric">Inflation: <span id="sum-inf">--</span></div>
-            <div class="summary-metric">Confidence: <span id="sum-conf">--</span></div>
-        </div>
-
-        <p id="fb-summary" style="font-size: 1.05rem; line-height: 1.5; color: #2d3748; margin-bottom: 15px;"></p>
-        
-        <div class="feedback-section">
-            <div class="fb-good">
-                <b style="color: #2f855a;">What You Did Well:</b>
-                <p id="fb-positives" style="margin-top: 5px; color: #4a5568;"></p>
-            </div>
-            <div class="fb-bad">
-                <b style="color: #c53030;">Areas for Improvement:</b>
-                <p id="fb-negatives" style="margin-top: 5px; color: #4a5568;"></p>
-            </div>
-        </div>
-    </div>
-
-    <div id="press-overlay" class="press-overlay">
-        <div class="press-modal">
-            <h2 style="display:flex; align-items:center; gap:8px;">🎤 Live FOMC Press Conference</h2>
-            <p style="color:#4a5568; font-style:italic; font-size:0.9rem;" id="reporter-name">Reporter:</p>
-            <h3 id="press-question" style="font-size:1.15rem; margin-bottom:15px; color:#000;">Question</h3>
-            <div id="press-choices"></div>
+    <!-- Game Over Modal Window -->
+    <div class="game-over" id="gameOverModal">
+        <div class="modal">
+            <h2 id="modalTitle">Game Over</h2>
+            <p id="modalText">You have been removed from office due to economic instability.</p>
+            <button onclick="window.location.reload()" style="background-color: var(--accent-color);">Restart Simulation</button>
         </div>
     </div>
 
     <script>
-        // State variables
+        // Game State Variables
         let quarter = 1;
-        let gdp = 4.2;
-        let unemployment = 3.1;
         let inflation = 8.5;
-        let fedRate = 1.50;
-        let confidence = 55; 
-        const TOTAL_QUARTERS = 16;
+        let gdp = 2.1;
+        let unemployment = 4.2;
+        let confidence = 55;
+        let interestRate = 5.25;
 
-        // Diagnostic analytics arrays
-        let historyRates = [];
-        let persistentInflationQuarters = 0;
-        let harshRecessionQuarters = 0;
+        // Hidden Macro Engine Coefficients (Slightly adjusted for structural sanity)
+        let inflationExpectations = 6.0;
+        let naturalRateUnemployment = 4.5;
+        let potentialGdpGrowth = 2.5;
 
-        const pressConferences = {
-            4: {
-                reporter: "Wall Street Journal:",
-                question: "Mr./Madam Chair, inflation remains stubbornly high despite your early adjustments. Is the Fed fully committed to its 2% mandate, or are you afraid of causing a recession?",
-                choices: [
-                    { text: "We will do whatever it takes to break inflation. Substantial rate hikes remain firmly on the table.", impact: () => { inflation -= 0.6; gdp -= 0.3; confidence -= 8; return "Markets price in aggressive hikes. Inflation expectations fall, but short-term consumer sentiment drops."; } },
-                    { text: "We must look at both sides of our mandate. Protecting American jobs is just as important as lower prices.", impact: () => { inflation += 0.8; confidence += 5; return "Consumers feel short-term job security relief, but markets fear a dovish Fed, worsening inflation expectations."; } }
-                ]
-            },
-            8: {
-                reporter: "Bloomberg News:",
-                question: "Consumers are cutting back on retail spending and the housing sector is slumping. Are we currently headed toward a stagflation trap, and how will you adapt?",
-                choices: [
-                    { text: "We believe the slowdown is transitory. Supply chains are normalizing, so we will pause rate increases.", impact: () => { gdp += 0.4; inflation += 0.6; confidence += 8; return "Consumer confidence jumps temporarily on a policy pause, but core inflation flares back up."; } },
-                    { text: "Slowing demand is a painful but necessary step to stabilize prices. We will hold tight restrictions until the data changes.", impact: () => { gdp -= 0.6; inflation -= 0.8; unemployment += 0.4; confidence -= 12; return "Confidence dips significantly as businesses freeze expansion and cut down operational budgets."; } }
-                ]
-            },
-            12: {
-                reporter: "Fox Business Network:",
-                question: "Political leaders are criticizing high interest rates, stating they are killing small businesses. Will political pressure alter your policy runway?",
-                choices: [
-                    { text: "The Federal Reserve operates strictly independent of politics. Our sole focus remains long-term structural health.", impact: () => { inflation -= 0.4; confidence += 4; return "Fed institutional credibility strengthens. Long-term corporate baseline expectations stabilize."; } },
-                    { text: "We are listening closely to public concerns and will factor economic hardships into our upcoming winter cycle decisions.", impact: () => { inflation += 0.5; confidence += 2; return "Short-term populist relief, but long-term market volatility ticks upward."; } }
-                ]
-            }
+        // Historical tracking for charts
+        let history = {
+            quarters: ['Q1'],
+            inflation: [8.5],
+            gdp: [2.1],
+            unemployment: [4.2],
+            rates: [5.25]
         };
 
-        const slider = document.getElementById('rate-slider');
-        const sliderVal = document.getElementById('slider-val');
-        slider.addEventListener('input', (e) => {
-            sliderVal.innerText = parseFloat(e.target.value).toFixed(2) + '%';
+        // DOM Elements
+        const rateSlider = document.getElementById('rateSlider');
+        const rateSliderVal = document.getElementById('rateSliderVal');
+        const nextQuarterBtn = document.getElementById('nextQuarterBtn');
+        const logContainer = document.getElementById('logContainer');
+        const newsBox = document.getElementById('newsBox');
+        const newsText = document.getElementById('newsText');
+
+        // Dynamic Text Updates
+        const inflationVal = document.getElementById('inflationVal');
+        const gdpVal = document.getElementById('gdpVal');
+        const unemploymentVal = document.getElementById('unemploymentVal');
+        const confidenceVal = document.getElementById('confidenceVal');
+        const quarterVal = document.getElementById('quarterVal');
+
+        // Update Slider readout text
+        rateSlider.addEventListener('input', (e) => {
+            interestRate = parseFloat(e.target.value);
+            rateSliderVal.innerText = interestRate.toFixed(2) + '%';
         });
 
-        function addLog(text, type='neutral') {
-            const logBox = document.getElementById('log');
-            const entry = document.createElement('div');
-            entry.className = `log-entry ${type}`;
-            entry.innerHTML = text;
-            logBox.appendChild(entry);
-            logBox.scrollTop = logBox.scrollHeight;
-        }
-
-        function advanceQuarter() {
-            fedRate = parseFloat(slider.value);
-            historyRates.push(fedRate);
-            let shock = (Math.random() - 0.5) * 0.4; 
-
-            // Scripted Macro Events over 16 quarters
-            if (quarter === 3) {
-                inflation += 0.6;
-                confidence -= 5;
-                addLog("[NEWS] Geopolitical conflicts break out, forcing global energy costs higher.", 'bad');
+        // Initialize Chart.js
+        const ctx = document.getElementById('economyChart').getContext('2d');
+        const economyChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: history.quarters,
+                datasets: [
+                    { label: 'Inflation', data: history.inflation, borderColor: '#f85149', backgroundColor: 'transparent', borderWidth: 2, tension: 0.1 },
+                    { label: 'GDP Growth', data: history.gdp, borderColor: '#58a6ff', backgroundColor: 'transparent', borderWidth: 2, tension: 0.1 },
+                    { label: 'Unemployment', data: history.unemployment, borderColor: '#d29922', backgroundColor: 'transparent', borderWidth: 2, tension: 0.1 },
+                    { label: 'Interest Rate', data: history.rates, borderColor: '#8b949e', borderDash: [5, 5], backgroundColor: 'transparent', borderWidth: 1.5, tension: 0.1 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { grid: { color: '#21262d' }, ticks: { color: '#c9d1d9', font: { family: 'Courier New' } } },
+                    x: { grid: { color: '#21262d' }, ticks: { color: '#c9d1d9', font: { family: 'Courier New' } } }
+                },
+                plugins: {
+                    legend: { labels: { color: '#c9d1d9', font: { family: 'Courier New', size: 10 } } }
+                }
             }
-            if (quarter === 6 && fedRate < 6.0) {
-                inflation += 1.0;
-                confidence -= 6;
-                addLog("[NEWS] Labor unions successfully secure 8% wage increases across core sectors.", 'bad');
-            }
-            if (quarter === 10) {
-                shock -= 0.8;
-                confidence -= 10;
-                addLog("[NEWS] Regional bank liquidity issues spark stricter credit standards across lenders.", 'bad');
-            }
-            if (quarter === 14) {
-                shock += 0.4;
-                confidence += 8;
-                addLog("[NEWS] Breakthroughs in automated supply logistics structurally lower operational overhead.", 'good');
-            }
+        });
 
-            // Central Policy Engine Math
-            let realRate = fedRate - inflation;
-            if (realRate < -2.5) {
-                gdp += 0.4 + (shock * 0.4);
-                inflation += 0.5 + (shock * 0.4);
-                unemployment -= 0.3;
-                confidence += 2; 
-            } else {
-                let contractionStrength = (fedRate - 1.5) * 0.35;
-                gdp = gdp - contractionStrength + (shock * 0.4);
-                inflation = inflation - (contractionStrength * 0.45) + (shock * 0.3);
-                
-                // Fixed Code: Ensure negative GDP properly increases unemployment without sign-flipping bugs
-                let gdpImpact = gdp < 0 ? Math.abs(gdp) * 0.15 : -(gdp * 0.12);
-                unemployment = unemployment + (contractionStrength * 0.20) + gdpImpact;
-                // Prevent runaway values
-                unemployment = Math.max(3.0, Math.min(15.0, unemployment));
-            }
-
-            // Track flags for post-mortem critique
-            if (inflation > 5.0) persistentInflationQuarters++;
-            if (unemployment > 6.5) harshRecessionQuarters++;
-
-            // Confidence metrics tracking
-            // Fixed Code: Cap the penalty and add a stabilization mechanic
-            let inflationExcess = Math.max(0, inflation - 4.5);
-            let confidencePenalty = Math.min(3, inflationExcess * 0.8); // Capped at 3 points max
-            confidence -= confidencePenalty;
-            // Reward the player for aggressive rate hikes when inflation is high
-            if (fedRate >= inflation - 1 && inflation > 5) {
-                confidence += 1.5; 
-            }
-            confidence = Math.max(10, Math.min(100, confidence)); // Hard floor at 10 to prevent death spiral
-
-            if (unemployment > 5.5) confidence -= (unemployment - 5.5) * 2.0;
-            if (gdp > 1.5 && gdp <= 3.5 && inflation < 3.0) confidence += 3;
-
-            // Consumer Confidence negative loop
-            if (confidence < 40) {
-                gdp -= 0.4;
-                unemployment += 0.2;
-            }
-
-            // Boundaries
-            if (unemployment < 2.0) unemployment = 2.0;
-            if (inflation < -1.5) inflation = -1.5;
-            if (gdp < -5.0) gdp = -5.0;
-            if (confidence > 100) confidence = 100;
-            if (confidence < 0) confidence = 0;
-
-            updateUI();
-
-            addLog(`[Q${quarter} Result] Rate: ${fedRate.toFixed(2)}% | GDP: ${gdp.toFixed(1)}% | Unemp: ${unemployment.toFixed(1)}% | Inflation: ${inflation.toFixed(1)}%`);
-
-            if (pressConferences[quarter]) {
-                triggerPressConference(quarter);
-            } else {
-                proceedTimeline();
-            }
-        }
-
-        // Keep rest of code exactly the same
-        function updateUI() {
-            document.getElementById('gdp-val').innerText = gdp.toFixed(1) + '%';
-            document.getElementById('unemp-val').innerText = unemployment.toFixed(1) + '%';
-            document.getElementById('inf-val').innerText = inflation.toFixed(1) + '%';
-            document.getElementById('conf-val').innerText = confidence.toFixed(0) + '%';
-            document.getElementById('conf-fill').style.width = confidence.toFixed(0) + '%';
-
-            document.getElementById('inf-val').className = Math.abs(inflation - 2) < 1.0 ? 'metric-value good' : 'metric-value bad';
-            document.getElementById('unemp-val').className = Math.abs(unemployment - 4.5) < 0.8 ? 'metric-value good' : 'metric-value bad';
-            document.getElementById('gdp-val').className = (gdp >= 1.5 && gdp <= 3.5) ? 'metric-value good' : 'metric-value bad';
-            
-            if (confidence >= 65) document.getElementById('conf-val').style.color = '#2f855a';
-            else if (confidence >= 40) document.getElementById('conf-val').style.color = '#3182ce';
-            else document.getElementById('conf-val').style.color = '#c53030';
-        }
-
-        function triggerPressConference(qNum) {
-            const conf = pressConferences[qNum];
-            document.getElementById('reporter-name').innerText = conf.reporter;
-            document.getElementById('press-question').innerText = conf.question;
-            const container = document.getElementById('press-choices');
-            container.innerHTML = ""; 
-            
-            conf.choices.forEach((choice) => {
-                const btn = document.createElement('button');
-                btn.className = "choice-btn";
-                btn.innerText = choice.text;
-                btn.onclick = () => selectPressAnswer(choice);
-                container.appendChild(btn);
-            });
-            document.getElementById('press-overlay').style.display = 'flex';
-        }
-
-        function selectPressAnswer(choice) {
-            document.getElementById('press-overlay').style.display = 'none';
-            let outcomeText = choice.impact();
-            addLog(`🎤 [Press Statement Impact] ${outcomeText}`, 'good');
-            updateUI();
-            proceedTimeline();
-        }
-
-        function proceedTimeline() {
+        // Core Game Advancement Trigger
+        nextQuarterBtn.addEventListener('click', () => {
             quarter++;
-            if (quarter <= TOTAL_QUARTERS) {
-                document.getElementById('current-quarter').innerText = `Quarter ${quarter} of ${TOTAL_QUARTERS}`;
-            } else {
-                endGame();
+            updateEconomy();
+            checkGameStatus();
+            updateInterface();
+        });
+
+        function updateEconomy() {
+            // Calculate real monetary tightness (Taylor-rule baseline approach)
+            // If interest rates are higher than current inflation, the economy actively contracts
+            let realInterestRate = interestRate - inflation;
+            let contractionStrength = realInterestRate - 0.5; 
+
+            // 1. Update GDP Growth (Driven dynamically by real policy drag or stimulation)
+            let economicShock = contractionStrength * 0.45;
+            gdp = potentialGdpGrowth + economicShock - (unemployment - naturalRateUnemployment) * 0.3;
+            // Introduce mathematical floor/ceilings to maintain real-world context
+            gdp = Math.max(-6.0, Math.min(6.5, gdp));
+
+            // 2. FIXED UNEMPLOYMENT FORMULA (Resolves the sign-flipping engine bug)
+            // Negative GDP now logically harms employment, without exploding compounding numbers
+            let gdpImpact = gdp < 0 ? Math.abs(gdp) * 0.22 : -(gdp * 0.12);
+            let policyLagUnemployment = contractionStrength > 0 ? contractionStrength * 0.15 : contractionStrength * 0.05;
+            unemployment = unemployment + policyLagUnemployment + gdpImpact;
+            // Cap unemployment logically so it cannot run away infinitely
+            unemployment = Math.max(3.0, Math.min(15.0, unemployment));
+
+            // 3. FIXED INFLATION FORMULA (Ensures policy contraction actively cools rates)
+            // Slowly drags adaptive expectations down with actual policy force
+            inflationExpectations = (inflationExpectations * 0.85) + (inflation * 0.15);
+            let monetaryCooling = contractionStrength > 0 ? -(contractionStrength * 0.22) : 0;
+            inflation = inflation + (gdp * 0.15) + (inflationExpectations * 0.1) + monetaryCooling - 0.15;
+            inflation = Math.max(0.5, inflation); // Floor inflation above negative territory for baseline tracking
+
+            // 4. FIXED CONFIDENCE POOL FORMULA (Ends the rapid death spiral bug)
+            let inflationExcess = Math.max(0, inflation - 4.5);
+            let confidencePenalty = Math.min(3.5, inflationExcess * 0.8); // Caps maximum damage per round
+            confidence -= confidencePenalty;
+
+            // Small bonus reward if the user implements a valid real interest rate hike against high inflation
+            if (interestRate >= inflation - 0.5 && inflation > 4.5) {
+                confidence += 1.5;
+            }
+            // Penalty checks for extreme labor market failures or severe economic depression
+            if (unemployment > 8.0) confidence -= (unemployment - 8.0) * 0.8;
+            if (gdp < -2.0) confidence -= 1.0;
+
+            // Enforce explicit min/max boundaries on the public confidence metric
+            confidence = Math.max(0, Math.min(100, confidence));
+
+            // Log current metrics to system terminal
+            logAction();
+        }
+
+        function logAction() {
+            let entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<strong>[Q${quarter} REPORT]</strong> Rate set to ${interestRate.toFixed(2)}%. Resulting Metrics -> Inflation: ${inflation.toFixed(1)}% | GDP: ${gdp.toFixed(1)}% | Unemployment: ${unemployment.toFixed(1)}% | Confidence: ${Math.round(confidence)}`;
+            logContainer.prepend(entry);
+        }
+
+        function checkGameStatus() {
+            const modal = document.getElementById('gameOverModal');
+            const title = document.getElementById('modalTitle');
+            const text = document.getElementById('modalText');
+
+            // Trigger Defeat State: Confidence pool dries out completely
+            if (confidence <= 0) {
+                modal.style.visibility = 'visible';
+                title.innerText = "POLITICAL COLLAPSE";
+                title.className = "text-danger";
+                text.innerText = `You were forced to resign in Quarter ${quarter}. Public confidence hit absolute zero. Inflation remains unresolved at ${inflation.toFixed(1)}% with unemployment standing at ${unemployment.toFixed(1)}%.`;
+                nextQuarterBtn.disabled = true;
+                return;
+            }
+
+            // Trigger Defeat State: Hyper-Stagflation or Extreme Depression
+            if (unemployment >= 12.0) {
+                modal.style.visibility = 'visible';
+                title.innerText = "ECONOMIC DEPRESSION";
+                title.className = "text-danger";
+                text.innerText = `The economy fell into a deep systemic depression in Quarter ${quarter}. Unemployment surpassed critical limits at ${unemployment.toFixed(1)}%. Core stability was compromised.`;
+                nextQuarterBtn.disabled = true;
+                return;
+            }
+
+            // Trigger Victory State: Reached Quarter 16 successfully satisfying constraints
+            if (quarter >= 16) {
+                modal.style.visibility = 'visible';
+                if (inflation <= 2.6 && inflation >= 1.5 && unemployment <= 5.5) {
+                    title.innerText = "SOFT LANDING ACHIEVED";
+                    title.className = "text-success";
+                    text.innerText = `Congratulations! You successfully checked structural inflation down to ${inflation.toFixed(1)}% while preserving labor metrics (Unemployment: ${unemployment.toFixed(1)}%). The markets hail you as a economic genius.`;
+                } else {
+                    title.innerText = "TERM LIMIT REACHED";
+                    title.className = "text-warning";
+                    text.innerText = `Your simulation window concluded at Quarter 16. Current Metrics -> Inflation: ${inflation.toFixed(1)}%, Unemployment: ${unemployment.toFixed(1)}%. You survived, but failed to orchestrate a clean, optimized soft-landing.`;
+                }
+                nextQuarterBtn.disabled = true;
             }
         }
 
-        function endGame() {
-            document.getElementById('current-quarter').innerText = "Simulation Complete";
-            document.getElementById('next-btn').disabled = true;
-            slider.disabled = true;
+        function updateInterface() {
+            // Update textual UI outputs with appropriate alerts
+            quarterVal.innerText = 'Q' + quarter;
+            
+            inflationVal.innerText = inflation.toFixed(1) + '%';
+            if (inflation > 5.0) { inflationVal.className = 'stat-value text-danger'; }
+            else if (inflation > 2.5) { inflationVal.className = 'stat-value text-warning'; }
+            else { inflationVal.className = 'stat-value text-success'; }
 
-            let infError = Math.abs(inflation - 2.0);
-            let unempError = Math.abs(unemployment - 4.5);
-            let finalScore = (confidence * 0.3) + (100 - (infError * 8) - (unempError * 8)) * 0.7;
-            if (finalScore > 100) finalScore = 100;
-            if (finalScore < 0) finalScore = 0;
+            gdpVal.innerText = gdp.toFixed(1) + '%';
+            if (gdp < 0) { gdpVal.className = 'stat-value text-danger'; }
+            else if (gdp < 1.5) { gdpVal.className = 'stat-value text-warning'; }
+            else { gdpVal.className = 'stat-value text-success'; }
 
-            // Fill centralized final summary chart
-            document.getElementById('sum-gdp').innerText = gdp.toFixed(1) + '%';
-            document.getElementById('sum-unemp').innerText = unemployment.toFixed(1) + '%';
-            document.getElementById('sum-inf').innerText = inflation.toFixed(1) + '%';
-            document.getElementById('sum-conf').innerText = confidence.toFixed(0) + '%';
-            document.getElementById('fb-score').innerText = `Final Composite Score: ${finalScore.toFixed(0)} / 100`;
+            unemploymentVal.innerText = unemployment.toFixed(1) + '%';
+            if (unemployment > 7.0) { unemploymentVal.className = 'stat-value text-danger'; }
+            else if (unemployment > 5.0) { unemploymentVal.className = 'stat-value text-warning'; }
+            else { unemploymentVal.className = 'stat-value text-success'; }
 
-            // Read early hiking patterns
-            let earlyHikes = historyRates.slice(0, 4).filter(r => r >= 6.5).length;
+            confidenceVal.innerText = Math.round(confidence);
+            if (confidence < 25) { confidenceVal.className = 'stat-value text-danger'; }
+            else if (confidence < 50) { confidenceVal.className = 'stat-value text-warning'; }
+            else { confidenceVal.className = 'stat-value text-success'; }
 
-            let summaryText = "";
-            let positivePoints = "";
-            let negativePoints = "";
-
-            if (finalScore >= 80) {
-                summaryText = "Sensational victory! You successfully executed a historic soft landing. By breaking the back of entrenched high inflation, you safeguarded long-term purchasing power while carefully preventing an outright economic collapse.";
-            } else if (finalScore >= 62) {
-                summaryText = "Moderate performance. You managed to rein in inflation, but your timing was slightly off, triggering severe collateral pain in the labor force or leaving consumer confidence highly fractured.";
+            // Handle alert system updates dynamically
+            if (inflation > 6.0) {
+                newsBox.style.display = 'block';
+                newsText.innerText = `High inflation (${inflation.toFixed(1)}%) is decimating long-term consumer sentiment. Aggressive monetary restriction advised.`;
+            } else if (unemployment > 7.0) {
+                newsBox.style.display = 'block';
+                newsText.innerText = `Labor contractions expanding. Unemployment at ${unemployment.toFixed(1)}%. Dovish rate considerations suggested to protect output thresholds.`;
             } else {
-                summaryText = "Critical institutional failure. The macroeconomic framework broke down. You either allowed a hyperinflationary wage-price spiral to take hold, or engineered a crushing economic depression.";
+                newsBox.style.display = 'none';
             }
 
-            // Positive diagnostic reviews
-            if (earlyHikes >= 2) {
-                positivePoints += "✔️ <b>Decisive Early Tightening:</b> You correctly identified that a low 1.50% starting rate was fuel to the fire. By raising rates aggressively during the first year, you successfully crushed negative real interest rates and lowered long-term inflation expectations.<br>";
-            } else if (inflation <= 3.0) {
-                positivePoints += "✔️ <b>Price Stability Restored:</b> Despite a slow start, you successfully brought inflation numbers down close to the statutory 2.0% mandate target.<br>";
-            }
-            if (unemployment >= 3.8 && unemployment <= 5.2) {
-                positivePoints += "✔️ <b>Optimal Employment Runway:</b> You masterfully balanced tightening cycles without causing massive corporate layoffs, keeping structural unemployment remarkably close to its natural target threshold.<br>";
-            }
-            if (confidence >= 65) {
-                positivePoints += "✔️ <b>Strong Forward Guidance:</b> Your press statements and transparent policy trajectory successfully defended consumer trust and market expectations.<br>";
-            }
-
-            // Constructive negative feedback
-            if (earlyHikes < 2) {
-                negativePoints += "❌ <b>Behind the Curve:</b> You hesitated to spike interest rates significantly in the opening quarters. This allowed high inflation to entrench itself deeply, sparking a wage-price spiral and creating severe long-term damage.<br>";
-            }
-            if (persistentInflationQuarters > 5) {
-                negativePoints += "❌ <b>Prolonged Cost Crisis:</b> You kept policy too loose for too long. Because interest rates remained below or near the inflation rate, consumers suffered structural erosion of purchasing power for too many quarters.<br>";
-            }
-            if (harshRecessionQuarters > 4) {
-                negativePoints += "❌ <b>Policy Overkill (Hard Landing):</b> You slammed the brakes way too hard or held maximum restrictive interest rates for too long, causing massive business failures and pushing the labor force into an artificial, deep recession.<br>";
-            }
-            if (confidence < 45) {
-                negativePoints += "❌ <b>Communication Breakdown:</b> Your policies or press choices severely damaged consumer sentiment, triggering a low-confidence loop that dragged down retail consumption and manufacturing production metrics.<br>";
-            }
-
-            if (!positivePoints) positivePoints = "No distinct structural highlights recorded. Focus on reacting aggressively to early-stage metrics.";
-            if (!negativePoints) negativePoints = "Impeccable performance! You committed no systemic monetary policy errors during this structural timeline.";
-
-            document.getElementById('fb-positives').innerHTML = positivePoints;
-            document.getElementById('fb-negatives').innerHTML = negativePoints;
-            document.getElementById('fb-summary').innerText = summaryText;
-            document.getElementById('feedback-box').style.display = "block";
-            document.getElementById('feedback-box').scrollIntoView({ behavior: 'smooth' });
+            // Append historical details and refresh interactive graphics
+            history.quarters.push('Q' + quarter);
+            history.inflation.push(parseFloat(inflation.toFixed(2)));
+            history.gdp.push(parseFloat(gdp.toFixed(2)));
+            history.unemployment.push(parseFloat(unemployment.toFixed(2)));
+            history.rates.push(interestRate);
+            
+            economyChart.update();
         }
     </script>
 </body>
